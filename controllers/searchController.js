@@ -11,6 +11,7 @@ const search = asyncHandler(async (req, res) => {
   const { searchValue, searchThrough, specificField } = req.body
   try {
     let results = []
+    let query = {}
     switch (searchThrough) {
       case 'All':
         // Search all models
@@ -18,8 +19,10 @@ const search = asyncHandler(async (req, res) => {
           $or: [
             { name: { $regex: searchValue, $options: 'i' } },
             { excerpt: { $regex: searchValue, $options: 'i' } },
+            { journalOfPublication: { $regex: searchValue, $options: 'i' } },
             { contributors: { $regex: searchValue, $options: 'i' } },
             { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
+            { linkToPublication: { $regex: searchValue, $options: 'i' } },
             { sauProfessorDepartment: { $regex: searchValue, $options: 'i' } },
             { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
             { relevantTags: { $regex: searchValue, $options: 'i' } },
@@ -71,41 +74,113 @@ const search = asyncHandler(async (req, res) => {
         break
       case 'publishedPapers':
         // Search only in publishedPapers model
-        results = await PublishedPaper.find({
-          $or: [
-            { name: { $regex: searchValue, $options: 'i' } },
-            { excerpt: { $regex: searchValue, $options: 'i' } },
-            { contributors: { $regex: searchValue, $options: 'i' } },
-            { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
-            { sauProfessorDepartment: { $regex: searchValue, $options: 'i' } },
-            { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
-            { relevantTags: { $regex: searchValue, $options: 'i' } },
-          ],
-        })
-          .limit(5)
-          .lean()
+        if (specificField == 'All') {
+          query = {
+            $or: [
+              { name: { $regex: searchValue, $options: 'i' } },
+              { excerpt: { $regex: searchValue, $options: 'i' } },
+              { journalOfPublication: { $regex: searchValue, $options: 'i' } },
+              { contributors: { $regex: searchValue, $options: 'i' } },
+              { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
+              { linkToPublication: { $regex: searchValue, $options: 'i' } },
+              {
+                sauProfessorDepartment: { $regex: searchValue, $options: 'i' },
+              },
+              { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
+              { relevantTags: { $regex: searchValue, $options: 'i' } },
+            ],
+          }
+        } else if (specificField === 'name') {
+          query = {
+            name: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'excerpt') {
+          query = {
+            excerpt: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'journalOfPublication') {
+          query = {
+            journalOfPublication: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'contributors') {
+          query = {
+            contributors: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauAuthorProfessor') {
+          query = {
+            sauAuthorProfessor: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'linkToPublication') {
+          query = {
+            linkToPublication: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauProfessorDepartment') {
+          query = {
+            sauProfessorDepartment: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauProfessorEmail') {
+          query = {
+            sauProfessorEmail: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'relevantTags') {
+          query = {
+            relevantTags: { $regex: searchValue, $options: 'i' },
+          }
+        }
+        results = await PublishedPaper.find(query).limit(5).lean()
 
         results.forEach((publishedPaper) => {
           publishedPaper.url = '/published-paper/' + publishedPaper._id
           publishedPaper.type = 'Published Paper'
         })
         break
-
       case 'projects':
         // Search only in projects model
-        results = await Project.find({
-          $or: [
-            { name: { $regex: searchValue, $options: 'i' } },
-            { projectDetails: { $regex: searchValue, $options: 'i' } },
-            { projectCollaborators: { $regex: searchValue, $options: 'i' } },
-            { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
-            { sauProfessorDepartment: { $regex: searchValue, $options: 'i' } },
-            { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
-            { relevantTags: { $regex: searchValue, $options: 'i' } },
-          ],
-        })
-          .limit(5)
-          .lean()
+        if (specificField == 'All') {
+          query = {
+            $or: [
+              { name: { $regex: searchValue, $options: 'i' } },
+              { projectDetails: { $regex: searchValue, $options: 'i' } },
+              { projectCollaborators: { $regex: searchValue, $options: 'i' } },
+              { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
+              {
+                sauProfessorDepartment: { $regex: searchValue, $options: 'i' },
+              },
+              { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
+              { relevantTags: { $regex: searchValue, $options: 'i' } },
+            ],
+          }
+        } else if (specificField === 'name') {
+          query = {
+            name: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'projectDetails') {
+          query = {
+            projectDetails: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'projectCollaborators') {
+          query = {
+            projectCollaborators: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauAuthorProfessor') {
+          query = {
+            sauAuthorProfessor: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauProfessorDepartment') {
+          query = {
+            sauProfessorDepartment: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauProfessorEmail') {
+          query = {
+            sauProfessorEmail: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'relevantTags') {
+          query = {
+            relevantTags: { $regex: searchValue, $options: 'i' },
+          }
+        }
+
+        results = await Project.find(query).limit(5).lean()
         results.forEach((project) => {
           project.url = '/project/' + project._id
           project.type = 'Project'
@@ -114,19 +189,51 @@ const search = asyncHandler(async (req, res) => {
         break
       case 'patents':
         // Search only in patents model
-        results = await Patent.find({
-          $or: [
-            { name: { $regex: searchValue, $options: 'i' } },
-            { excerpt: { $regex: searchValue, $options: 'i' } },
-            { contributors: { $regex: searchValue, $options: 'i' } },
-            { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
-            { sauProfessorDepartment: { $regex: searchValue, $options: 'i' } },
-            { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
-            { relevantTags: { $regex: searchValue, $options: 'i' } },
-          ],
-        })
-          .limit(5)
-          .lean()
+        if (specificField == 'All') {
+          query = {
+            $or: [
+              { name: { $regex: searchValue, $options: 'i' } },
+              { excerpt: { $regex: searchValue, $options: 'i' } },
+              { contributors: { $regex: searchValue, $options: 'i' } },
+              { sauAuthorProfessor: { $regex: searchValue, $options: 'i' } },
+              {
+                sauProfessorDepartment: { $regex: searchValue, $options: 'i' },
+              },
+              { sauProfessorEmail: { $regex: searchValue, $options: 'i' } },
+              { relevantTags: { $regex: searchValue, $options: 'i' } },
+            ],
+          }
+        } else if (specificField === 'name') {
+          query = {
+            name: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'excerpt') {
+          query = {
+            excerpt: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'contributors') {
+          query = {
+            contributors: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauAuthorProfessor') {
+          query = {
+            sauAuthorProfessor: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauProfessorDepartment') {
+          query = {
+            sauProfessorDepartment: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'sauProfessorEmail') {
+          query = {
+            sauProfessorEmail: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'relevantTags') {
+          query = {
+            relevantTags: { $regex: searchValue, $options: 'i' },
+          }
+        }
+
+        results = await Patent.find(query).limit(5).lean()
         results.forEach((patent) => {
           patent.url = '/patent/' + patent._id
           patent.type = 'Patent'

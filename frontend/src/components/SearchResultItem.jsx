@@ -1,8 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-function SearchResultItem({ result }) {
+function SearchResultItem({ result, handleClick }) {
   return (
-    <a className="searchResultItem" href={result.url}>
+    <Link className="searchResultItem" to={result.url} onClick={handleClick}>
       <h3 className="paperTitle">
         <span className="paperType">{result.type}</span>: {result.name}
       </h3>
@@ -13,7 +14,7 @@ function SearchResultItem({ result }) {
         })}
       </div>
       <div className="totalViews">{result.totalViews} Views</div>
-    </a>
+    </Link>
   )
 }
 

@@ -44,6 +44,12 @@ function SearchBar() {
     const selectedSpecificField = event.target.value
     setSpecificField(selectedSpecificField)
   }
+
+  const handleClick = (e) => {
+    setSearchValue('')
+    setSearchThrough('All')
+    setSpecificField('All')
+  }
   return (
     <div className="searchBarComponent">
       <div className="searchOptions">
@@ -92,7 +98,6 @@ function SearchBar() {
             >
               <option value="All">All</option>
               <option value="name">Name</option>
-              <option value="authorizationDate">Authorization Date</option>
               <option value="excerpt">Excerpt</option>
               <option value="contributors">Contributors</option>
               <option value="sauAuthorProfessor">SAU Author Professor</option>
@@ -100,7 +105,6 @@ function SearchBar() {
                 SAU Professor Department
               </option>
               <option value="sauProfessorEmail">SAU Professor Email</option>
-              <option value="totalViews">Total Views</option>
               <option value="relevantTags">Relevant Tags</option>
             </select>
           </div>
@@ -116,7 +120,6 @@ function SearchBar() {
               <option value="All">All</option>
               <option value="name">Name</option>
               <option value="projectDetails">Project Details</option>
-              <option value="projectFunding">Project Funding</option>
               <option value="projectCollaborators">
                 Project Collaborators
               </option>
@@ -125,7 +128,6 @@ function SearchBar() {
                 SAU Professor Department
               </option>
               <option value="sauProfessorEmail">SAU Professor Email</option>
-              <option value="totalViews">Total Views</option>
               <option value="relevantTags">Relevant Tags</option>
             </select>
           </div>
@@ -139,7 +141,6 @@ function SearchBar() {
               onChange={handleSpecificFieldChange}
             >
               <option value="All">All</option>
-              <option value="createdBy">Created By</option>
               <option value="name">Name</option>
               <option value="excerpt">Excerpt</option>
               <option value="journalOfPublication">
@@ -152,8 +153,6 @@ function SearchBar() {
               <option value="sauProfessorDepartment">
                 SAU Professor Department
               </option>
-              <option value="dateWritten">Date Written</option>
-              <option value="totalViews">Total Views</option>
               <option value="relevantTags">Relevant Tags</option>
             </select>
           </div>
@@ -166,7 +165,11 @@ function SearchBar() {
       ) : searchResults.length > 0 ? (
         <div className="searchResults">
           {searchResults.map((result, index) => (
-            <SearchResultItem key={index} result={result} />
+            <SearchResultItem
+              key={index}
+              result={result}
+              handleClick={handleClick}
+            />
           ))}
         </div>
       ) : (
