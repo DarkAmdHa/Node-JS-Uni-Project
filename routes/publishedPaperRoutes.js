@@ -5,9 +5,19 @@ const router = express.Router()
 const {
   getPublishedPapers,
   getPublishedPaper,
+  createPublishedPaper,
+  updatePublishedPaper,
+  deletePublishedPaper,
 } = require('../controllers/publishedPaperController')
 
-router.route('/').get(protect, getPublishedPapers)
+router
+  .route('/')
+  .get(protect, getPublishedPapers)
+  .post(protect, createPublishedPaper)
 
-router.route('/:id').get(protect, getPublishedPaper)
+router
+  .route('/:id')
+  .get(protect, getPublishedPaper)
+  .put(protect, updatePublishedPaper)
+  .delete(protect, deletePublishedPaper)
 module.exports = router

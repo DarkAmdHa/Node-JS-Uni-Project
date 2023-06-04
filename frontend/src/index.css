@@ -51,6 +51,7 @@ h3 {
   padding: 20px 0;
   border-bottom: 1px solid #e6e6e6;
   margin-bottom: 60px;
+  flex-wrap: wrap;
 }
 
 .header ul {
@@ -142,6 +143,28 @@ h3 {
   margin: 0 0 5px 3px;
 }
 
+.creationForm {
+  padding-bottom: 20px;
+}
+
+.checkboxField {
+  display: flex;
+  gap: 10px;
+  min-height: 30px;
+  align-items: center;
+}
+
+.checkboxField input {
+  width: fit-content;
+  margin: 0;
+}
+
+.checkboxField label {
+  margin: 0;
+  line-height: 1;
+  font-size: 13px;
+}
+
 .btn {
   padding: 10px 20px;
   border: 1px solid #000;
@@ -156,6 +179,10 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.selectableOptions {
+  margin-top: 20px;
 }
 
 .btn svg {
@@ -461,6 +488,29 @@ a.containerItem {
   transition: 0.5s ease;
 }
 
+.deletePost:hover svg,
+.editPost:hover svg {
+  transform: scale(1.2);
+}
+
+.deletePost svg,
+.editPost svg {
+  transition: 0.5s ease;
+}
+
+.deletePost,
+.editPost {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+.deletePost {
+  color: #d90000;
+  margin-right: 10px;
+}
+
 .teacherDepartment {
   bottom: 10px;
   right: 15px;
@@ -622,7 +672,170 @@ p.dept {
   color: #fff;
 }
 
+.searchBarComponent {
+  width: fit-content;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  position: relative;
+}
+
+.searchOptions {
+  display: flex;
+  height: 40px;
+  gap: 0px;
+  position: relative;
+  z-index: 10;
+}
+
+.searchOptions .searchBar {
+  position: relative;
+}
+
+.searchOptions .searchBar input {
+  border: none;
+  border-radius: 5px;
+  width: 500px;
+  padding: 5px 10px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  height: 100%;
+}
+
+.searchOptions .searchBar input:focus {
+  border: none;
+  outline: none;
+}
+
+.searchOptions .searchBar input#searchText.hasValue + label {
+  transform: scale(0.6) translate(-20px, -20px);
+}
+
+.searchOptions .searchBar label {
+  transition: 0.5s ease;
+  pointer-events: none;
+  position: absolute;
+  left: 10px;
+  top: 7px;
+  color: #9a9a9a;
+}
+
+.searchOptions .searchThrough.searchThroughSpecific select {
+  border-radius: 0;
+}
+
+.searchOptions .searchThrough select,
+.searchOptions .specificField select {
+  height: 100%;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  padding: 10px;
+  outline: none;
+  cursor: pointer;
+  width: 120px;
+}
+
+.searchBarComponent .searchResults {
+  position: absolute;
+  background: #ffffffde;
+  top: 50px;
+  width: 100%;
+  max-width: 80vw;
+  padding: 0;
+  z-index: 1;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.searchBarComponent .searchResults a.searchResultItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid;
+  padding: 20px;
+  transition: 0.5s ease;
+  background: transparent;
+}
+
+.searchResultItem h3.paperTitle {
+  font-size: 15px;
+  padding-right: 70px;
+  font-weight: normal;
+}
+.searchResultItem .paperTitle .paperType {
+  font-weight: bold;
+}
+
+.searchResultItem h3.paperTitle .author {
+  font-size: 10px;
+}
+
+.searchResultItem .author {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.searchResultItem .relevant-tags {
+  padding-top: 5px;
+}
+
+.searchResultItem .totalViews {
+  top: 20px;
+  right: 20px;
+  font-size: 12px;
+}
+
+.searchBarComponent .searchResults a.searchResultItem:first-child .totalViews {
+  top: 30px;
+}
+
+.searchBarComponent .searchResults a.searchResultItem:hover {
+  background: #fff;
+  box-shadow: 0px 6px 20px 0px rgb(0 0 0 / 8%);
+}
+
+.searchBarComponent .searchResults a.searchResultItem:first-child {
+  padding-top: 30px;
+}
+.searchBarComponent .searchResults a.searchResultItem:last-child {
+  border-bottom: none;
+}
+
+.searchBarComponent .searchResults a.searchResultItem:last-child {
+  border-bottom: none;
+}
+
+.searchResults.noResults {
+  padding: 30px 0;
+}
+
+.searchResults.noResults img {
+  width: 150px;
+}
+
+.searchResults.loadingResults {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchResults.loadingResults .loadingSpinner {
+  border-color: #000 transparent #3d5a80 transparent;
+}
+
 @media (min-width: 600px) {
+  .creationForm .form-group.hasSubgroups {
+    display: flex;
+    gap: 20px;
+  }
+  .creationForm .form-subgroup {
+    width: 50%;
+  }
+
   .mainNavBtns {
     display: flex;
     gap: 25px;

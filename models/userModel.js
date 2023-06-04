@@ -20,6 +20,12 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    papersPublished: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'publishedPaper',
+      },
+    ],
   },
   {
     timestamps: true,

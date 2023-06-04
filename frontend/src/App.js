@@ -6,12 +6,17 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import PrivateRoute from './components/PrivateRoute'
+import Create from './pages/Create'
 import PublishedPapers from './pages/PublishedPapers'
 import PublishedPaper from './pages/PublishedPaper'
 import Patents from './pages/Patents'
 import Patent from './pages/Patent'
 import Projects from './pages/Projects'
 import Project from './pages/Project'
+
+import CreatePaper from './pages/CreatePaper'
+import CreatePatent from './pages/CreatePatent'
+import CreateProject from './pages/CreateProject'
 
 function App() {
   return (
@@ -23,6 +28,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/create" element={<Create />} />
             <Route path="/published-papers" element={<PrivateRoute />}>
               <Route path="/published-papers" element={<PublishedPapers />} />
             </Route>
@@ -43,6 +49,15 @@ function App() {
             </Route>
             <Route path="/project/:projectId" element={<PrivateRoute />}>
               <Route path="/project/:projectId" element={<Project />} />
+            </Route>
+            <Route path="/create-project" element={<PrivateRoute />}>
+              <Route path="/create-project" element={<CreateProject />} />
+            </Route>
+            <Route path="/create-patent" element={<PrivateRoute />}>
+              <Route path="/create-patent" element={<CreatePatent />} />
+            </Route>
+            <Route path="/create-paper" element={<PrivateRoute />}>
+              <Route path="/create-paper" element={<CreatePaper />} />
             </Route>
           </Routes>
         </div>

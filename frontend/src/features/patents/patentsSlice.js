@@ -47,6 +47,23 @@ export const getPatent = createAsyncThunk(
     }
   }
 )
+export const createPatent = createAsyncThunk(
+  'patents/create',
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await patentsService.createPatent(data, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
 
 export const patentSlice = createSlice({
   name: 'patent',
@@ -78,6 +95,19 @@ export const patentSlice = createSlice({
         state.patent = action.payload
       })
       .addCase(getPatent.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(createPatent.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(createPatent.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.patent = action.payload
+      })
+      .addCase(createPatent.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload

@@ -2,13 +2,21 @@ const mongoose = require('mongoose')
 
 const publishedPaperSchema = mongoose.Schema(
   {
+    createdBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     name: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'name' field
     },
     excerpt: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'excerpt' field
     },
     journalOfPublication: {
       type: String,
@@ -17,6 +25,7 @@ const publishedPaperSchema = mongoose.Schema(
     contributors: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'contributors' field
     },
     sauAuthorProfessor: {
       type: String,
@@ -43,7 +52,6 @@ const publishedPaperSchema = mongoose.Schema(
       required: false,
       default: 0,
     },
-    //This is for searching and/or SEO purposes
     relevantTags: {
       type: [String],
       required: true,
@@ -53,5 +61,11 @@ const publishedPaperSchema = mongoose.Schema(
     timestamps: true,
   }
 )
+
+publishedPaperSchema.index({
+  name: 'text',
+  excerpt: 'text',
+  contributors: 'text',
+}) // Define the text index
 
 module.exports = mongoose.model('publishedPaper', publishedPaperSchema)

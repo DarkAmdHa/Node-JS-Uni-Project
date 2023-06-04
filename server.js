@@ -18,6 +18,7 @@ app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/publishedPapers', require('./routes/publishedPaperRoutes'))
 app.use('/api/patents', require('./routes/patentRoutes'))
 app.use('/api/projects', require('./routes/projectRoutes'))
+app.use('/api/search', require('./routes/searchRoutes'))
 
 app.use(express.static(path.join(__dirname, './frontend/build')))
 

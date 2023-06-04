@@ -5,10 +5,12 @@ const projectSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'name' field
     },
     projectDetails: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'projectDetails' field
     },
     projectFunding: {
       type: Number,
@@ -35,7 +37,6 @@ const projectSchema = mongoose.Schema(
       required: false,
       default: 0,
     },
-    //This is for searching and/or SEO purposes
     relevantTags: {
       type: [String],
       required: true,
@@ -45,5 +46,7 @@ const projectSchema = mongoose.Schema(
     timestamps: true,
   }
 )
+
+projectSchema.index({ name: 'text', projectDetails: 'text' }) // Define the text index
 
 module.exports = mongoose.model('project', projectSchema)

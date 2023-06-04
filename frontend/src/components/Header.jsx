@@ -1,7 +1,8 @@
-import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
+import { FaPlus, FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, reset } from '../features/auth/authSlice'
+import SearchBar from './SearchBar'
 
 function Header() {
   const navigate = useNavigate()
@@ -13,6 +14,7 @@ function Header() {
     dispatch(reset)
     navigate('/')
   }
+
   return (
     <header className="header">
       <div className="logo">
@@ -20,11 +22,18 @@ function Header() {
       </div>
       <ul>
         {user ? (
-          <li>
-            <button className="btn" onClick={onLogout}>
-              <FaSignOutAlt /> Logout
-            </button>
-          </li>
+          <>
+            <li>
+              <Link to="/create">
+                <FaPlus /> Create
+              </Link>
+            </li>
+            <li>
+              <button className="btn" onClick={onLogout}>
+                <FaSignOutAlt /> Logout
+              </button>
+            </li>
+          </>
         ) : (
           <>
             <li>
@@ -40,6 +49,8 @@ function Header() {
           </>
         )}
       </ul>
+
+      <SearchBar />
     </header>
   )
 }

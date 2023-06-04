@@ -1,28 +1,49 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   getPublishedPapers,
   reset,
 } from '../features/publishedPapers/publishedPapersSlice'
+import { toast } from 'react-toastify'
+
 import PublishedPaperItem from '../components/PublishedPaperItem'
 import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton'
 
 function PublishedPapers() {
-  const { publishedPapers, isLoading, isError, isSuccess, message } =
-    useSelector((state) => state.publishedPapers)
+  const {
+    publishedPapers,
+    isLoading,
+    isError,
+    isSuccess,
+    message,
+    isUpdated,
+    isDeleted,
+  } = useSelector((state) => state.publishedPapers)
+
+  const [firstLoad, setFirstLoad] = useState(false)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    return () => {
-      if (isSuccess) dispatch(reset())
+    if (isError) {
+      toast.error(message)
     }
-  }, [dispatch, isSuccess])
+    if (!firstLoad) {
+      dispatch(getPublishedPapers())
+      setFirstLoad(true)
+    }
+    if (isSuccess && isUpdated) {
+      toast.success('Paper Updated')
+      dispatch(getPublishedPapers())
+    }
 
-  useEffect(() => {
-    dispatch(getPublishedPapers())
-  }, [dispatch])
+    if (isSuccess && isDeleted) {
+      toast.success('Paper Deleted')
+      dispatch(getPublishedPapers())
+    }
+    dispatch(reset())
+  }, [dispatch, isSuccess, isUpdated, isDeleted, isError])
 
   if (isLoading) {
     return <Spinner />

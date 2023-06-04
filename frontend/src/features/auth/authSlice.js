@@ -50,6 +50,23 @@ export const logout = createAsyncThunk(
   }
 )
 
+export const refetchUser = createAsyncThunk(
+  'auth/refetchUser',
+  async (user, thunkAPI) => {
+    try {
+      return await authService.refetchUser(user)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -89,6 +106,20 @@ export const authSlice = createSlice({
         state.user = action.payload
       })
       .addCase(login.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+        state.user = null
+      })
+      .addCase(refetchUser.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(refetchUser.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.user = action.payload
+      })
+      .addCase(refetchUser.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload

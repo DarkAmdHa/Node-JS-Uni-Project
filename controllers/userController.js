@@ -41,6 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
+      publishedPapers: user.papersPublished,
     })
   } else {
     res.status(400)
@@ -62,6 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
+      publishedPapers: user.papersPublished,
     })
   } else {
     res.status(401)
@@ -69,16 +71,17 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 })
 
-// @desc    LGet current user
-//@route    /api/users/me
+// @desc    Return current user and his details
+//@route    POST /api/users/currentUser
 //@access   Private
-const getMe = asyncHandler(async (req, res) => {
-  const user = {
-    id: req.user._id,
-    email: req.user.email,
+const getUserDetails = asyncHandler((req, res) => {
+  res.status(200).json({
+    _id: req.user._id,
     name: req.user.name,
-  }
-  res.status(200).json(user)
+    email: req.user.email,
+    token: generateToken(req.user._id),
+    publishedPapers: req.user.papersPublished,
+  })
 })
 
 const generateToken = (id) =>
@@ -89,5 +92,5 @@ const generateToken = (id) =>
 module.exports = {
   registerUser,
   loginUser,
-  getMe,
+  getUserDetails,
 }

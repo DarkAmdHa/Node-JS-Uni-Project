@@ -26,6 +26,44 @@ const getPublishedPaper = async (paperId, token) => {
   return response.data
 }
 
-const publishedPapersService = { getPublishedPapers, getPublishedPaper }
+const createPublishedPaper = async (data, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.post(API_URL, data, config)
+  return response.data
+}
+const updatePublishedPaper = async (data, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.put(
+    API_URL + data.id,
+    data.editModePaperFormData,
+    config
+  )
+  return response.data
+}
+const deletePublishedPaper = async (paperId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.delete(API_URL + paperId, config)
+  return response.data
+}
+
+const publishedPapersService = {
+  getPublishedPapers,
+  getPublishedPaper,
+  createPublishedPaper,
+  updatePublishedPaper,
+  deletePublishedPaper,
+}
 
 export default publishedPapersService

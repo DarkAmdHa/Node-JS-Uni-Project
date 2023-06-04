@@ -5,6 +5,7 @@ const patentSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'name' field
     },
     authorizationDate: {
       type: Date,
@@ -13,10 +14,12 @@ const patentSchema = mongoose.Schema(
     excerpt: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'excerpt' field
     },
     contributors: {
       type: String,
       required: true,
+      text: true, // Add text index to the 'contributors' field
     },
     sauAuthorProfessor: {
       type: String,
@@ -35,7 +38,6 @@ const patentSchema = mongoose.Schema(
       required: false,
       default: 0,
     },
-    //This is for searching and/or SEO purposes
     relevantTags: {
       type: [String],
       required: true,
@@ -45,5 +47,7 @@ const patentSchema = mongoose.Schema(
     timestamps: true,
   }
 )
+
+patentSchema.index({ name: 'text', excerpt: 'text', contributors: 'text' }) // Define the text index
 
 module.exports = mongoose.model('patent', patentSchema)
