@@ -26,6 +26,18 @@ const userSchema = mongoose.Schema(
         ref: 'publishedPaper',
       },
     ],
+    patents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'patent',
+      },
+    ],
+    projects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'project',
+      },
+    ],
   },
   {
     timestamps: true,

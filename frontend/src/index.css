@@ -881,4 +881,69 @@ p.dept {
   .heading p {
     font-size: 1.5rem;
   }
+
+  .searchOptions .searchBar input {
+    width: 100%;
+  }
+
+  .searchBarComponent {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .searchOptions .searchBar {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .searchOptions {
+    width: 100%;
+    height: fit-content;
+    row-gap: 5px;
+  }
+
+  .header {
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .header ul li:first-child {
+    margin-left: 0;
+  }
+
+  .searchOptions .specificField select {
+    width: 80px;
+  }
+
+  .searchBarComponent .searchResults {
+    top: 35px;
+    max-width: unset;
+    z-index: 999;
+    box-shadow: 0px 12px 20px 0px rgb(0 0 0 / 6%);
+  }
+
+  .logo {
+    width: 100%;
+  }
+
+  .logo a {
+    font-size: 22px;
+  }
+
+  .header ul li a,
+  .header ul li button {
+    font-size: 13px;
+  }
+  .teacherDepartment {
+    display: none;
+  }
+
+  .relevant-tags {
+    z-index: 99;
+  }
+  a.containerItem p,
+  a.containerItem h3 {
+    z-index: 9;
+  }
 }
