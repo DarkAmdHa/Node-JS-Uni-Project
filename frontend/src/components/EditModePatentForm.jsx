@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { updatePublishedPaper } from '../features/publishedPapers/publishedPapersSlice'
+import { updatePatent } from '../features/patents/patentsSlice'
 
-function EditModePaperForm({ publishedPaper, setInEditMode }) {
+function EditModePatentForm({ patent, setInEditMode }) {
   const { user } = useSelector((state) => state.auth)
 
   const dispatch = useDispatch()
@@ -12,43 +12,41 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
   const [emailCheckbox, setEmailCheckbox] = useState(false)
   const [formattedDate, setFormattedDate] = useState('')
 
-  const [editModePaperFormData, setEditModePaperFormData] =
-    useState(publishedPaper)
+  const [editModePatentFormData, setEditModePatentFormData] = useState(patent)
 
   //For Edit mode:
   const {
     name,
     excerpt,
-    journalOfPublication,
+    authorizationDate,
     contributors,
     sauAuthorProfessor,
-    linkToPublication,
     sauProfessorEmail,
     sauProfessorDepartment,
-    dateWritten,
     relevantTags,
-  } = editModePaperFormData
+  } = editModePatentFormData
 
   useEffect(() => {
-    const formatDateObj = new Date(dateWritten)
+    const formatDateObj = new Date(authorizationDate)
     setFormattedDate(formatDateObj.toISOString().split('T')[0])
-  }, [dateWritten])
+  }, [authorizationDate])
 
   const onSubmit = (e) => {
     console.log('first')
+    debugger
     const updateData = {
-      id: publishedPaper._id,
-      editModePaperFormData,
+      id: patent._id,
+      editModePatentFormData,
     }
-    dispatch(updatePublishedPaper(updateData))
+    dispatch(updatePatent(updateData))
   }
   const onChange = (e) => {
-    setEditModePaperFormData((prevState) => ({
+    setEditModePatentFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }))
-    if (e.target.name === 'dateWritten') {
-      const formatDateObj = new Date(dateWritten)
+    if (e.target.name === 'authorizationDate') {
+      const formatDateObj = new Date(authorizationDate)
       setFormattedDate(formatDateObj.toISOString().split('T')[0])
     }
   }
@@ -56,7 +54,7 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
   const handleAuthorCheckbox = (e) => {
     setAuthorCheckbox(e.target.checked)
     if (e.target.checked === false) {
-      setEditModePaperFormData((prevState) => ({
+      setEditModePatentFormData((prevState) => ({
         ...prevState,
         sauAuthorProfessor: '',
       }))
@@ -66,7 +64,7 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
   const handleEmailCheckbox = (e) => {
     setEmailCheckbox(e.target.checked)
     if (e.target.checked === false) {
-      setEditModePaperFormData((prevState) => ({
+      setEditModePatentFormData((prevState) => ({
         ...prevState,
         sauProfessorEmail: '',
       }))
@@ -85,7 +83,7 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
               name="name"
               value={name}
               onChange={onChange}
-              placeholder="Enter the title of the paper, as it appears in the journal"
+              placeholder="Enter the title of the patent, as it appears in the journal"
               required
             />
           </div>
@@ -98,40 +96,13 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
               name="excerpt"
               value={excerpt}
               onChange={onChange}
-              placeholder="Please give a short description of the paper."
+              placeholder="Please give a short description of the patent."
               required
             />
           </div>
         </div>
 
         <div className="form-group hasSubgroups">
-          <div className="form-subgroup">
-            <label htmlFor="journalOfPublication">Journal Of Publication</label>
-            <select
-              defaultValue=""
-              className="form-control"
-              id="journalOfPublication"
-              name="journalOfPublication"
-              value={journalOfPublication}
-              onChange={onChange}
-              required
-            >
-              <option value="" disabled>
-                Select A Journal
-              </option>
-              <option value="IEEE Transactions on Pattern Analysis and Machine Intelligence">
-                IEEE Transactions on Pattern Analysis and Machine Intelligence
-              </option>
-              <option value="ACM Computing Surveys">
-                ACM Computing Surveys
-              </option>
-              <option value="Foundations and Trends in Machine Learning">
-                Foundations and Trends in Machine Learning
-              </option>
-              <option value="AI Open">AI Open</option>
-              <option value="SN Computer Science">SN Computer Science</option>
-            </select>
-          </div>
           <div className="form-subgroup">
             <label htmlFor="name">Contributors</label>
             <input
@@ -144,6 +115,39 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
               placeholder="Please add the names, seperated by a comma."
               required
             />
+          </div>
+          <div className="form-subgroup">
+            <label htmlFor="sauProfessorDepartment">
+              Author's SAU Department
+            </label>
+            <select
+              defaultValue=""
+              className="form-control"
+              id="sauProfessorDepartment"
+              name="sauProfessorDepartment"
+              value={sauProfessorDepartment}
+              onChange={onChange}
+              required
+            >
+              <option value="" disabled>
+                Select A Department
+              </option>
+              <option value="Shenyang Aerospace University Aerospace Department">
+                Shenyang Aerospace University Aerospace Department
+              </option>
+              <option value="Shenyang Aerospace University Artificial Intelligence Department">
+                Shenyang Aerospace University Artificial Intelligence Department
+              </option>
+              <option value="Shenyang Aerospace University Computer Science Department">
+                Shenyang Aerospace University Computer Science Department
+              </option>
+              <option value="Shenyang Aerospace University Electrical Engineering Department">
+                Shenyang Aerospace University Electrical Engineering Department
+              </option>
+              <option value="Shenyang Aerospace University Mechatronics Department">
+                Shenyang Aerospace University Mechatronics Department
+              </option>
+            </select>
           </div>
         </div>
         <div className="form-group hasSubgroups">
@@ -219,64 +223,15 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
 
         <div className="form-group hasSubgroups">
           <div className="form-subgroup">
-            <label htmlFor="linkToPublication">Link To Publication</label>
-            <input
-              type="text"
-              className="form-control"
-              id="linkToPublication"
-              name="linkToPublication"
-              value={linkToPublication}
-              onChange={onChange}
-              placeholder="Link to the published paper"
-              required
-            />
-          </div>
-          <div className="form-subgroup">
-            <label htmlFor="sauProfessorDepartment">
-              Author's SAU Department
-            </label>
-            <select
-              defaultValue=""
-              className="form-control"
-              id="sauProfessorDepartment"
-              name="sauProfessorDepartment"
-              value={sauProfessorDepartment}
-              onChange={onChange}
-              required
-            >
-              <option value="" disabled>
-                Select A Department
-              </option>
-              <option value="Shenyang Aerospace University Aerospace Department">
-                Shenyang Aerospace University Aerospace Department
-              </option>
-              <option value="Shenyang Aerospace University Artificial Intelligence Department">
-                Shenyang Aerospace University Artificial Intelligence Department
-              </option>
-              <option value="Shenyang Aerospace University Computer Science Department">
-                Shenyang Aerospace University Computer Science Department
-              </option>
-              <option value="Shenyang Aerospace University Electrical Engineering Department">
-                Shenyang Aerospace University Electrical Engineering Department
-              </option>
-              <option value="Shenyang Aerospace University Mechatronics Department">
-                Shenyang Aerospace University Mechatronics Department
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div className="form-group hasSubgroups">
-          <div className="form-subgroup">
-            <label htmlFor="dateWritten">Date of Publication</label>
+            <label htmlFor="authorizationDate">Date of Authorization</label>
             <input
               type="date"
               className="form-control"
-              id="dateWritten"
-              name="dateWritten"
+              id="authorizationDate"
+              name="authorizationDate"
               value={formattedDate}
               onChange={onChange}
-              placeholder="Date the paper was published"
+              placeholder="Date the patent was published"
               required
             />
           </div>
@@ -314,4 +269,4 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
   )
 }
 
-export default EditModePaperForm
+export default EditModePatentForm

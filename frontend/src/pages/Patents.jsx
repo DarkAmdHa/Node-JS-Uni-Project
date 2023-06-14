@@ -1,26 +1,46 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
 import { useSelector, useDispatch } from 'react-redux'
 import { getPatents, reset } from '../features/patents/patentsSlice'
 import PatentItem from '../components/PatentItem'
 import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton'
+import { toast } from 'react-toastify'
 
 function Patents() {
-  const { patents, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.patents
-  )
+  const {
+    patents,
+    isLoading,
+    isError,
+    isSuccess,
+    message,
+    isUpdated,
+    isDeleted,
+  } = useSelector((state) => state.patents)
+
+  const [firstLoad, setFirstLoad] = useState(false)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    return () => {
-      if (isSuccess) dispatch(reset())
+    if (isError) {
+      toast.error(message)
     }
-  }, [dispatch, isSuccess])
+    if (!firstLoad) {
+      dispatch(getPatents())
+      setFirstLoad(true)
+    }
+    if (isSuccess && isUpdated) {
+      toast.success('Patent Updated')
+      dispatch(getPatents())
+    }
 
-  useEffect(() => {
-    dispatch(getPatents())
-  }, [dispatch])
+    if (isSuccess && isDeleted) {
+      toast.success('Patent Deleted')
+      dispatch(getPatents())
+    }
+    dispatch(reset())
+  }, [dispatch, firstLoad, isError, isSuccess, isUpdated, isDeleted, message])
 
   if (isLoading) {
     return <Spinner />

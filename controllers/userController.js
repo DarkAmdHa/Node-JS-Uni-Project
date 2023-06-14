@@ -42,6 +42,8 @@ const registerUser = asyncHandler(async (req, res) => {
       email: user.email,
       token: generateToken(user._id),
       publishedPapers: user.papersPublished,
+      patents: user.patents,
+      projects: user.projects,
     })
   } else {
     res.status(400)
@@ -64,6 +66,8 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       token: generateToken(user._id),
       publishedPapers: user.papersPublished,
+      patents: user.patents,
+      projects: user.projects,
     })
   } else {
     res.status(401)
@@ -81,6 +85,8 @@ const getUserDetails = asyncHandler((req, res) => {
     email: req.user.email,
     token: generateToken(req.user._id),
     publishedPapers: req.user.papersPublished,
+    patents: req.user.patents,
+    projects: req.user.projects,
   })
 })
 

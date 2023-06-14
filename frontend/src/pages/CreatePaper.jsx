@@ -1,7 +1,6 @@
 import BackButton from '../components/BackButton'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import { useSelector, useDispatch } from 'react-redux'
 import {
   createPublishedPaper,
@@ -24,7 +23,7 @@ function CreatePaper() {
     isLoading: userIsLoading,
   } = useSelector((state) => state.auth)
 
-  const { isLoading, isError, isSuccess, message, publishedPaper } =
+  const { isLoading, isError, message, publishedPaper, isCreated } =
     useSelector((state) => state.publishedPapers)
 
   useEffect(() => {
@@ -32,21 +31,24 @@ function CreatePaper() {
       toast.error(message)
     }
 
-    if (isSuccess) {
+    if (isCreated) {
       toast.success('Paper Created')
       //The paper is created, so we should refetch the user.
       dispatch(refetchUser(user))
-      if (userIsError) {
-        toast.error(userMessage)
-      }
-      if (userIsSuccess) {
-        navigate('/published-papers')
-      }
     }
+
+    if (userIsError) {
+      toast.error(userMessage)
+    }
+    if (userIsSuccess) {
+      navigate('/published-papers')
+    }
+
     dispatch(reset())
+    dispatch(resetAuth())
   }, [
     isError,
-    isSuccess,
+    isCreated,
     message,
     user,
     userIsError,
@@ -83,10 +85,43 @@ function CreatePaper() {
     relevantTags,
   } = formData
 
+  function isValidHttpUrl(string) {
+    try {
+      const newUrl = new URL(string)
+      return newUrl.protocol === 'http:' || newUrl.protocol === 'https:'
+    } catch (err) {
+      return false
+    }
+  }
+
   const onSubmit = (e) => {
     e.preventDefault()
 
+    if (journalOfPublication == '') {
+      toast.error('Please select a journal of publication')
+      return false
+    }
+
+    if (!isValidHttpUrl(linkToPublication)) {
+      toast.error('Please provide a valid url to the publication.')
+      return false
+    }
+
+    if (name.length < 5) {
+      toast.error('Please provide a title longer than 5 characters.')
+      return false
+    }
+
+    if (excerpt.length < 50) {
+      toast.error('Please provide an excerpt of at least 50 characters.')
+      return false
+    }
+
     const relevantTagsArray = relevantTags.split(',')
+    if (relevantTagsArray.length < 3) {
+      toast.error('Your paper should have at least 3 tags.')
+      return false
+    }
     let finalAuthorEmail, finalAuthorName
     if (!authorCheckbox) {
       finalAuthorName = user.name
@@ -151,7 +186,7 @@ function CreatePaper() {
         <form onSubmit={onSubmit}>
           <div className="form-group hasSubgroups">
             <div className="form-subgroup">
-              <label for="name">Title</label>
+              <label htmlFor="name">Title</label>
               <input
                 type="text"
                 className="form-control"
@@ -164,7 +199,7 @@ function CreatePaper() {
               />
             </div>
             <div className="form-subgroup">
-              <label for="name">Excerpt</label>
+              <label htmlFor="name">Excerpt</label>
               <textarea
                 type="text"
                 className="form-control"
@@ -180,20 +215,36 @@ function CreatePaper() {
 
           <div className="form-group hasSubgroups">
             <div className="form-subgroup">
-              <label for="name">Journal Of Publication</label>
-              <input
-                type="text"
+              <label htmlFor="journalOfPublication">
+                Journal Of Publication
+              </label>
+              <select
+                defaultValue=""
                 className="form-control"
                 id="journalOfPublication"
                 name="journalOfPublication"
                 value={journalOfPublication}
                 onChange={onChange}
-                placeholder="Enter the title of the journal the paper is published in"
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select A Journal
+                </option>
+                <option value="IEEE Transactions on Pattern Analysis and Machine Intelligence">
+                  IEEE Transactions on Pattern Analysis and Machine Intelligence
+                </option>
+                <option value="ACM Computing Surveys">
+                  ACM Computing Surveys
+                </option>
+                <option value="Foundations and Trends in Machine Learning">
+                  Foundations and Trends in Machine Learning
+                </option>
+                <option value="AI Open">AI Open</option>
+                <option value="SN Computer Science">SN Computer Science</option>
+              </select>
             </div>
             <div className="form-subgroup">
-              <label for="name">Contributors</label>
+              <label htmlFor="name">Contributors</label>
               <input
                 type="text"
                 className="form-control"
@@ -209,7 +260,7 @@ function CreatePaper() {
 
           <div className="form-group hasSubgroups">
             <div className="form-subgroup">
-              <label for="name">Publishing Author's name</label>
+              <label htmlFor="name">Publishing Author's name</label>
               <div className="checkboxField">
                 <input
                   type="checkbox"
@@ -217,7 +268,9 @@ function CreatePaper() {
                   value="useOtherName"
                   onChange={handleAuthorCheckbox}
                 />
-                <label for="useOtherName">Use name other than yours ?</label>
+                <label htmlFor="useOtherName">
+                  Use name other than yours ?
+                </label>
               </div>
               {authorCheckbox ? (
                 <input
@@ -242,7 +295,9 @@ function CreatePaper() {
               )}
             </div>
             <div className="form-subgroup">
-              <label for="sauProfessorEmail">Publishing Author's Email</label>
+              <label htmlFor="sauProfessorEmail">
+                Publishing Author's Email
+              </label>
               <div className="checkboxField">
                 <input
                   type="checkbox"
@@ -250,7 +305,9 @@ function CreatePaper() {
                   value="useOtherEmail"
                   onChange={handleEmailCheckbox}
                 />
-                <label for="useOtherEmail">Use Email other than yours ?</label>
+                <label htmlFor="useOtherEmail">
+                  Use Email other than yours ?
+                </label>
               </div>
               {emailCheckbox ? (
                 <input
@@ -278,7 +335,7 @@ function CreatePaper() {
 
           <div className="form-group hasSubgroups">
             <div className="form-subgroup">
-              <label for="linkToPublication">Link To Publication</label>
+              <label htmlFor="linkToPublication">Link To Publication</label>
               <input
                 type="text"
                 className="form-control"
@@ -291,25 +348,46 @@ function CreatePaper() {
               />
             </div>
             <div className="form-subgroup">
-              <label for="sauProfessorDepartment">
+              <label htmlFor="sauProfessorDepartment">
                 Author's SAU Department
               </label>
-              <input
-                type="text"
+
+              <select
+                defaultValue=""
                 className="form-control"
                 id="sauProfessorDepartment"
                 name="sauProfessorDepartment"
                 value={sauProfessorDepartment}
                 onChange={onChange}
-                placeholder="Author's Department at the SAU"
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select A Department
+                </option>
+                <option value="Shenyang Aerospace University Aerospace Department">
+                  Shenyang Aerospace University Aerospace Department
+                </option>
+                <option value="Shenyang Aerospace University Artificial Intelligence Department">
+                  Shenyang Aerospace University Artificial Intelligence
+                  Department
+                </option>
+                <option value="Shenyang Aerospace University Computer Science Department">
+                  Shenyang Aerospace University Computer Science Department
+                </option>
+                <option value="Shenyang Aerospace University Electrical Engineering Department">
+                  Shenyang Aerospace University Electrical Engineering
+                  Department
+                </option>
+                <option value="Shenyang Aerospace University Mechatronics Department">
+                  Shenyang Aerospace University Mechatronics Department
+                </option>
+              </select>
             </div>
           </div>
 
           <div className="form-group hasSubgroups">
             <div className="form-subgroup">
-              <label for="dateWritten">Date of Publication</label>
+              <label htmlFor="dateWritten">Date of Publication</label>
               <input
                 type="date"
                 className="form-control"
@@ -318,12 +396,14 @@ function CreatePaper() {
                 value={dateWritten}
                 onChange={onChange}
                 placeholder="Date the paper was published"
+                min="1970-01-01"
+                max={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
 
             <div className="form-subgroup">
-              <label for="relevantTags">Relevant Tags to the article</label>
+              <label htmlFor="relevantTags">Relevant Tags to the article</label>
               <input
                 type="input"
                 className="form-control"

@@ -1,26 +1,46 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
 import { useSelector, useDispatch } from 'react-redux'
 import { getProjects, reset } from '../features/projects/projectsSlice'
 import ProjectItem from '../components/ProjectItem'
 import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton'
+import { toast } from 'react-toastify'
 
 function Projects() {
-  const { projects, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.projects
-  )
+  const {
+    projects,
+    isLoading,
+    isError,
+    isSuccess,
+    message,
+    isUpdated,
+    isDeleted,
+  } = useSelector((state) => state.projects)
+
+  const [firstLoad, setFirstLoad] = useState(false)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    return () => {
-      if (isSuccess) dispatch(reset())
+    if (isError) {
+      toast.error(message)
     }
-  }, [dispatch, isSuccess])
+    if (!firstLoad) {
+      dispatch(getProjects())
+      setFirstLoad(true)
+    }
+    if (isSuccess && isUpdated) {
+      toast.success('Project Updated')
+      dispatch(getProjects())
+    }
 
-  useEffect(() => {
-    dispatch(getProjects())
-  }, [dispatch])
+    if (isSuccess && isDeleted) {
+      toast.success('Project Deleted')
+      dispatch(getProjects())
+    }
+    dispatch(reset())
+  }, [dispatch, firstLoad, isError, isSuccess, isUpdated, isDeleted, message])
 
   if (isLoading) {
     return <Spinner />

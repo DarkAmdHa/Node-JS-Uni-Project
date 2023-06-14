@@ -2,13 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { FaTrash, FaEdit } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
-import {
-  deletePublishedPaper,
-  getPublishedPapers,
-  reset,
-} from '../features/publishedPapers/publishedPapersSlice'
-
-import { toast } from 'react-toastify'
+import { deletePublishedPaper } from '../features/publishedPapers/publishedPapersSlice'
 
 import EditModePaperForm from './EditModePaperForm'
 
@@ -60,9 +54,9 @@ function PublishedPaperItem({ publishedPaper }) {
             ', ' +
             new Date(publishedPaper.createdAt).getUTCFullYear()}
         </p>
-        <div class="relevant-tags">
+        <div className="relevant-tags">
           {publishedPaper.relevantTags.map((tag) => (
-            <div class="relevant-tag">{tag}</div>
+            <div className="relevant-tag">{tag}</div>
           ))}
         </div>
         {user.publishedPapers.includes(publishedPaper._id) && (

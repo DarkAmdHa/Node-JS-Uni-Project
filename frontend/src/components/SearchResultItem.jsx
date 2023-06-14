@@ -8,6 +8,14 @@ function SearchResultItem({ result, handleClick }) {
         <span className="paperType">{result.type}</span>: {result.name}
       </h3>
       <div className="author">Prof. {result.sauAuthorProfessor}</div>
+      {result.type === 'Project' && (
+        <div className="projectFundingAmountResult">
+          Project Funding:{' '}
+          <span className="fundingAmount">
+            ${result.projectFunding.toFixed(2)} USD
+          </span>
+        </div>
+      )}
       <div className="relevant-tags">
         {result.relevantTags.map((tag, index) => {
           return <div className="relevant-tag">{tag}</div>

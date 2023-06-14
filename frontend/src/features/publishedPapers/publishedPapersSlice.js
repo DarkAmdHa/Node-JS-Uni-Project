@@ -116,6 +116,7 @@ export const publishedPaperSlice = createSlice({
       message: '',
       isUpdated: false,
       isDeleted: false,
+      isCreated: false,
     }),
   },
   extraReducers: (builder) => {
@@ -152,6 +153,7 @@ export const publishedPaperSlice = createSlice({
       .addCase(createPublishedPaper.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
+        state.isCreated = true
         state.publishedPaper = action.payload
       })
       .addCase(createPublishedPaper.rejected, (state, action) => {

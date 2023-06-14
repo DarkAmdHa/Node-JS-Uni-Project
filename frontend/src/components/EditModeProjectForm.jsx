@@ -1,62 +1,49 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { updatePublishedPaper } from '../features/publishedPapers/publishedPapersSlice'
+import { updateProject } from '../features/projects/projectsSlice'
 
-function EditModePaperForm({ publishedPaper, setInEditMode }) {
+function EditModeProjectForm({ project, setInEditMode }) {
   const { user } = useSelector((state) => state.auth)
 
   const dispatch = useDispatch()
 
   const [authorCheckbox, setAuthorCheckbox] = useState(false)
   const [emailCheckbox, setEmailCheckbox] = useState(false)
-  const [formattedDate, setFormattedDate] = useState('')
 
-  const [editModePaperFormData, setEditModePaperFormData] =
-    useState(publishedPaper)
+  const [editModeProjectFormData, setEditModeProjectFormData] =
+    useState(project)
 
   //For Edit mode:
   const {
     name,
-    excerpt,
-    journalOfPublication,
-    contributors,
+    projectDetails,
+    projectFunding,
+    projectCollaborators,
     sauAuthorProfessor,
-    linkToPublication,
     sauProfessorEmail,
     sauProfessorDepartment,
-    dateWritten,
     relevantTags,
-  } = editModePaperFormData
-
-  useEffect(() => {
-    const formatDateObj = new Date(dateWritten)
-    setFormattedDate(formatDateObj.toISOString().split('T')[0])
-  }, [dateWritten])
+  } = editModeProjectFormData
 
   const onSubmit = (e) => {
-    console.log('first')
     const updateData = {
-      id: publishedPaper._id,
-      editModePaperFormData,
+      id: project._id,
+      editModeProjectFormData,
     }
-    dispatch(updatePublishedPaper(updateData))
+    dispatch(updateProject(updateData))
   }
   const onChange = (e) => {
-    setEditModePaperFormData((prevState) => ({
+    setEditModeProjectFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }))
-    if (e.target.name === 'dateWritten') {
-      const formatDateObj = new Date(dateWritten)
-      setFormattedDate(formatDateObj.toISOString().split('T')[0])
-    }
   }
 
   const handleAuthorCheckbox = (e) => {
     setAuthorCheckbox(e.target.checked)
     if (e.target.checked === false) {
-      setEditModePaperFormData((prevState) => ({
+      setEditModeProjectFormData((prevState) => ({
         ...prevState,
         sauAuthorProfessor: '',
       }))
@@ -66,7 +53,7 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
   const handleEmailCheckbox = (e) => {
     setEmailCheckbox(e.target.checked)
     if (e.target.checked === false) {
-      setEditModePaperFormData((prevState) => ({
+      setEditModeProjectFormData((prevState) => ({
         ...prevState,
         sauProfessorEmail: '',
       }))
@@ -85,20 +72,20 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
               name="name"
               value={name}
               onChange={onChange}
-              placeholder="Enter the title of the paper, as it appears in the journal"
+              placeholder="Enter the title of the project, as it appears in the journal"
               required
             />
           </div>
           <div className="form-subgroup">
-            <label htmlFor="name">Excerpt</label>
+            <label htmlFor="name">Project Description</label>
             <textarea
               type="text"
               className="form-control"
-              id="excerpt"
-              name="excerpt"
-              value={excerpt}
+              id="projectDetails"
+              name="projectDetails"
+              value={projectDetails}
               onChange={onChange}
-              placeholder="Please give a short description of the paper."
+              placeholder="Please give a short description of the project."
               required
             />
           </div>
@@ -106,44 +93,50 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
 
         <div className="form-group hasSubgroups">
           <div className="form-subgroup">
-            <label htmlFor="journalOfPublication">Journal Of Publication</label>
-            <select
-              defaultValue=""
-              className="form-control"
-              id="journalOfPublication"
-              name="journalOfPublication"
-              value={journalOfPublication}
-              onChange={onChange}
-              required
-            >
-              <option value="" disabled>
-                Select A Journal
-              </option>
-              <option value="IEEE Transactions on Pattern Analysis and Machine Intelligence">
-                IEEE Transactions on Pattern Analysis and Machine Intelligence
-              </option>
-              <option value="ACM Computing Surveys">
-                ACM Computing Surveys
-              </option>
-              <option value="Foundations and Trends in Machine Learning">
-                Foundations and Trends in Machine Learning
-              </option>
-              <option value="AI Open">AI Open</option>
-              <option value="SN Computer Science">SN Computer Science</option>
-            </select>
-          </div>
-          <div className="form-subgroup">
-            <label htmlFor="name">Contributors</label>
+            <label htmlFor="name">Project Collaborators</label>
             <input
               type="text"
               className="form-control"
-              id="contributors"
-              name="contributors"
-              value={contributors}
+              id="projectCollaborators"
+              name="projectCollaborators"
+              value={projectCollaborators}
               onChange={onChange}
               placeholder="Please add the names, seperated by a comma."
               required
             />
+          </div>
+          <div className="form-subgroup">
+            <label htmlFor="sauProfessorDepartment">
+              Author's SAU Department
+            </label>
+            <select
+              defaultValue=""
+              className="form-control"
+              id="sauProfessorDepartment"
+              name="sauProfessorDepartment"
+              value={sauProfessorDepartment}
+              onChange={onChange}
+              required
+            >
+              <option value="" disabled>
+                Select A Department
+              </option>
+              <option value="Shenyang Aerospace University Aerospace Department">
+                Shenyang Aerospace University Aerospace Department
+              </option>
+              <option value="Shenyang Aerospace University Artificial Intelligence Department">
+                Shenyang Aerospace University Artificial Intelligence Department
+              </option>
+              <option value="Shenyang Aerospace University Computer Science Department">
+                Shenyang Aerospace University Computer Science Department
+              </option>
+              <option value="Shenyang Aerospace University Electrical Engineering Department">
+                Shenyang Aerospace University Electrical Engineering Department
+              </option>
+              <option value="Shenyang Aerospace University Mechatronics Department">
+                Shenyang Aerospace University Mechatronics Department
+              </option>
+            </select>
           </div>
         </div>
         <div className="form-group hasSubgroups">
@@ -219,64 +212,15 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
 
         <div className="form-group hasSubgroups">
           <div className="form-subgroup">
-            <label htmlFor="linkToPublication">Link To Publication</label>
+            <label htmlFor="projectFunding">Project Funding</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              id="linkToPublication"
-              name="linkToPublication"
-              value={linkToPublication}
+              id="projectFunding"
+              name="projectFunding"
+              value={projectFunding}
               onChange={onChange}
-              placeholder="Link to the published paper"
-              required
-            />
-          </div>
-          <div className="form-subgroup">
-            <label htmlFor="sauProfessorDepartment">
-              Author's SAU Department
-            </label>
-            <select
-              defaultValue=""
-              className="form-control"
-              id="sauProfessorDepartment"
-              name="sauProfessorDepartment"
-              value={sauProfessorDepartment}
-              onChange={onChange}
-              required
-            >
-              <option value="" disabled>
-                Select A Department
-              </option>
-              <option value="Shenyang Aerospace University Aerospace Department">
-                Shenyang Aerospace University Aerospace Department
-              </option>
-              <option value="Shenyang Aerospace University Artificial Intelligence Department">
-                Shenyang Aerospace University Artificial Intelligence Department
-              </option>
-              <option value="Shenyang Aerospace University Computer Science Department">
-                Shenyang Aerospace University Computer Science Department
-              </option>
-              <option value="Shenyang Aerospace University Electrical Engineering Department">
-                Shenyang Aerospace University Electrical Engineering Department
-              </option>
-              <option value="Shenyang Aerospace University Mechatronics Department">
-                Shenyang Aerospace University Mechatronics Department
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div className="form-group hasSubgroups">
-          <div className="form-subgroup">
-            <label htmlFor="dateWritten">Date of Publication</label>
-            <input
-              type="date"
-              className="form-control"
-              id="dateWritten"
-              name="dateWritten"
-              value={formattedDate}
-              onChange={onChange}
-              placeholder="Date the paper was published"
+              placeholder="Total Amount of Funding in USD"
               required
             />
           </div>
@@ -314,4 +258,4 @@ function EditModePaperForm({ publishedPaper, setInEditMode }) {
   )
 }
 
-export default EditModePaperForm
+export default EditModeProjectForm

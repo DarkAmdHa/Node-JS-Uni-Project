@@ -47,6 +47,11 @@ const projectSchema = mongoose.Schema(
   }
 )
 
-projectSchema.index({ name: 'text', projectDetails: 'text' }) // Define the text index
+projectSchema.index({
+  name: 'text',
+  projectDetails: 'text',
+  projectFunding: 'text',
+  totalViews: 'text',
+})
 
 module.exports = mongoose.model('project', projectSchema)

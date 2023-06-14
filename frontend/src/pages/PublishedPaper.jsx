@@ -1,24 +1,62 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPublishedPaper } from '../features/publishedPapers/publishedPapersSlice'
 import { toast } from 'react-toastify'
 import { FaHandPointRight } from 'react-icons/fa'
 import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton'
+import { FaTrash, FaEdit } from 'react-icons/fa'
+import EditModePaperForm from '../components/EditModePaperForm'
+import {
+  deletePublishedPaper,
+  reset,
+} from '../features/publishedPapers/publishedPapersSlice'
 
 function PublishedPaper() {
-  const { isLoading, isError, isSuccess, message, publishedPaper } =
-    useSelector((state) => state.publishedPapers)
+  const {
+    isLoading,
+    isError,
+    isSuccess,
+    message,
+    publishedPaper,
+    isDeleted,
+    isUpdated,
+  } = useSelector((state) => state.publishedPapers)
+  const [inEditMode, setInEditMode] = useState(false)
+  const { user } = useSelector((state) => state.auth)
   const { paperId } = useParams()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleDelete = (e) => {
+    if (window.confirm('Are sure you want to delete this paper?')) {
+      //This will delete the paper
+      dispatch(deletePublishedPaper(paperId))
+    }
+  }
+
+  useEffect(() => {
+    dispatch(getPublishedPaper(paperId))
+  }, [])
 
   useEffect(() => {
     if (isError) {
       toast.error(message)
     }
-    dispatch(getPublishedPaper(paperId))
-  }, [isError, message, getPublishedPaper, paperId])
+
+    if (isSuccess && isDeleted) {
+      toast.success('Paper Deleted')
+      navigate('/published-papers')
+      dispatch(reset())
+    }
+
+    if (isSuccess && isUpdated) {
+      toast.success('Paper Updated')
+      setInEditMode(false)
+      dispatch(reset())
+    }
+  }, [paperId, isError, message, isSuccess, isDeleted, isUpdated])
 
   if (isLoading) {
     return <Spinner />
@@ -43,13 +81,24 @@ function PublishedPaper() {
     'December',
   ]
 
-  if (Object.keys(publishedPaper).length > 0) {
+  if (Object.keys(publishedPaper).length > 0 && !inEditMode) {
     return (
       <div className="mainArticle">
         <header className="ticket-header">
           <BackButton url="/published-papers" />
         </header>
         <div className="boxContainer">
+          {user.publishedPapers.includes(publishedPaper._id) && (
+            <>
+              <div className="deletePost" onClick={handleDelete}>
+                <FaTrash /> Delete
+              </div>
+              <div className="editPost" onClick={() => setInEditMode(true)}>
+                <FaEdit /> Edit
+              </div>
+            </>
+          )}
+
           <h2>{publishedPaper.name}</h2>
           <p className="journalOfPublication">
             {publishedPaper.journalOfPublication +
@@ -77,7 +126,9 @@ function PublishedPaper() {
           </div>
 
           <p className="authors">
-            <span class="author bold">{publishedPaper.sauAuthorProfessor}</span>
+            <span className="author bold">
+              {publishedPaper.sauAuthorProfessor}
+            </span>
             {publishedPaper.contributors && ', ' + publishedPaper.contributors}
           </p>
           <div className="aboutPublication">
@@ -104,10 +155,10 @@ function PublishedPaper() {
           <div className="abstract">
             <h3 className="abstractHeading">Abstract</h3>
             <div className="excerpt">{publishedPaper.excerpt}</div>
-            <div class="relevant-tags">
+            <div className="relevant-tags">
               <span>Keywords</span>
               {publishedPaper.relevantTags.map((tag) => (
-                <div class="relevant-tag">{tag}</div>
+                <div className="relevant-tag">{tag}</div>
               ))}
             </div>
           </div>
@@ -125,6 +176,13 @@ function PublishedPaper() {
           </div>
         </div>
       </div>
+    )
+  } else if (inEditMode) {
+    return (
+      <EditModePaperForm
+        publishedPaper={publishedPaper}
+        setInEditMode={setInEditMode}
+      />
     )
   }
 }

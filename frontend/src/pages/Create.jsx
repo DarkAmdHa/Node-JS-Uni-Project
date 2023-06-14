@@ -9,17 +9,20 @@ function Create() {
       <h1>Create A New Entry</h1>
       <p>What would you like to create ?</p>
 
-      <div class="selectableOptions">
+      <div className="selectableOptions">
         <Link
           to="/create-paper"
-          className="btn btn-reverse  btn-block mainNavBtn"
+          className="btn btn-reverse btn-block mainNavBtn"
         >
           <FaQuestionCircle /> A New Paper
         </Link>
         <Link to="/create-patent" className="btn btn-block mainNavBtn">
           <FaTicketAlt /> A new patent
         </Link>
-        <Link to="/projects" className="btn btn-reverse btn-block mainNavBtn">
+        <Link
+          to="/create-project"
+          className="btn btn-reverse btn-block mainNavBtn"
+        >
           <FaQuestionCircle /> A new project
         </Link>
       </div>

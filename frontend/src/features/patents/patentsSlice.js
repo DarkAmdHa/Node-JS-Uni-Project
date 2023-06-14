@@ -8,9 +8,12 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: '',
+  isUpdated: false,
+  isDeleted: false,
+  isCreated: false,
 }
 
-//Get all Published Papers
+//Get all Patents
 export const getPatents = createAsyncThunk(
   'patents/getAll',
   async (_, thunkAPI) => {
@@ -47,8 +50,9 @@ export const getPatent = createAsyncThunk(
     }
   }
 )
+
 export const createPatent = createAsyncThunk(
-  'patents/create',
+  'patent/create',
   async (data, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
@@ -65,11 +69,56 @@ export const createPatent = createAsyncThunk(
   }
 )
 
+export const updatePatent = createAsyncThunk(
+  'patent/update',
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await patentsService.updatePatent(data, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+export const deletePatent = createAsyncThunk(
+  'patent/delete',
+  async (patentId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await patentsService.deletePatent(patentId, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 export const patentSlice = createSlice({
   name: 'patent',
   initialState,
   reducers: {
-    reset: (state) => initialState,
+    reset: (state) => ({
+      ...state,
+      isError: false,
+      isSuccess: false,
+      isLoading: false,
+      message: '',
+      isUpdated: false,
+      isDeleted: false,
+      isCreated: false,
+    }),
   },
   extraReducers: (builder) => {
     builder
@@ -105,9 +154,38 @@ export const patentSlice = createSlice({
       .addCase(createPatent.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
+        state.isCreated = true
         state.patent = action.payload
       })
       .addCase(createPatent.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(updatePatent.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updatePatent.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.patent = action.payload
+        state.isUpdated = true
+      })
+      .addCase(updatePatent.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(deletePatent.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(deletePatent.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.patent = {}
+        state.isDeleted = true
+      })
+      .addCase(deletePatent.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload

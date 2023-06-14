@@ -29,12 +29,39 @@ const createPatent = async (data, token) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    data,
   }
-  const response = await axios.post(API_URL, config)
+  const response = await axios.post(API_URL, data, config)
+  return response.data
+}
+const updatePatent = async (data, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.put(
+    API_URL + data.id,
+    data.editModePatentFormData,
+    config
+  )
+  return response.data
+}
+const deletePatent = async (patentId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.delete(API_URL + patentId, config)
   return response.data
 }
 
-const patentsService = { getPatents, getPatent, createPatent }
+const patentsService = {
+  getPatents,
+  getPatent,
+  createPatent,
+  updatePatent,
+  deletePatent,
+}
 
 export default patentsService

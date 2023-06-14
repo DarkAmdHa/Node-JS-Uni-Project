@@ -9,6 +9,7 @@ const PublishedPaper = require('../models/publishedPaperModel')
 // @access  Public
 const search = asyncHandler(async (req, res) => {
   const { searchValue, searchThrough, specificField } = req.body
+  let fundingMin, fundingMax
   try {
     let results = []
     let query = {}
@@ -150,6 +151,16 @@ const search = asyncHandler(async (req, res) => {
               { relevantTags: { $regex: searchValue, $options: 'i' } },
             ],
           }
+          if (
+            !isNaN(+searchValue.split('-')[0]) &&
+            !isNaN(+searchValue.split('-')[1])
+          ) {
+            const fundingMin = +searchValue.split('-')[0]
+            const fundingMax = +searchValue.split('-')[1]
+            query.$or.push({
+              projectFunding: { $gte: fundingMin, $lte: fundingMax },
+            })
+          }
         } else if (specificField === 'name') {
           query = {
             name: { $regex: searchValue, $options: 'i' },
@@ -157,6 +168,12 @@ const search = asyncHandler(async (req, res) => {
         } else if (specificField === 'projectDetails') {
           query = {
             projectDetails: { $regex: searchValue, $options: 'i' },
+          }
+        } else if (specificField === 'projectFunding') {
+          const fundingMin = +searchValue.split('-')[0]
+          const fundingMax = +searchValue.split('-')[1]
+          query = {
+            projectFunding: { $gte: fundingMin, $lte: fundingMax },
           }
         } else if (specificField === 'projectCollaborators') {
           query = {

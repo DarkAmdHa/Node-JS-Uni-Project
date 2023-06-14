@@ -43,7 +43,7 @@ function PublishedPapers() {
       dispatch(getPublishedPapers())
     }
     dispatch(reset())
-  }, [dispatch, isSuccess, isUpdated, isDeleted, isError])
+  }, [dispatch, firstLoad, isError, isSuccess, isUpdated, isDeleted, message])
 
   if (isLoading) {
     return <Spinner />

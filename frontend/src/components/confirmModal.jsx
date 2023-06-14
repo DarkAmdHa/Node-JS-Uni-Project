@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { confirmable } from 'react-confirm'
 
 const YourDialog = ({ show, proceed, confirmation, options }) => (
-  <div class="dialog" onHide={() => proceed(false)} show={show}>
+  <div className="dialog" onHide={() => proceed(false)} show={show}>
     {confirmation}
     <button onClick={() => proceed(false)}>CANCEL</button>
     <button onClick={() => proceed(true)}>OK</button>
